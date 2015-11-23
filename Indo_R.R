@@ -1,0 +1,10 @@
+require('dplyr') 
+require('ggplot2') 
+require('rgdal')
+DIreport_clean <- read.csv("DIreport_clean.csv")
+View(DIreport_clean)
+indo <- DIreport_clean
+Added <- read.csv("Added.csv")
+View(Added)
+indo2 <- left_join(Added, indo, by=c('Year'= 'Year'))
+save(indo2, file="Indo.RData")
