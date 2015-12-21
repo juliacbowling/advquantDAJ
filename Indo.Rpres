@@ -1,0 +1,174 @@
+Indonesia Fires & Floods
+========================================================
+author: Danielle Robinson & Julia Bowling
+date: December 21, 2015
+***
+![JAKARTA_FLOOD](flood.jpg)
+
+Agenda
+========================================================
+- Disasters
+- Timeline
+- Geography
+- Sources & Variables
+- Analysis
+- Discussion
+- Policy Recommendation
+
+Disasters in Indonesia
+========================================================
+- Floods
+- Fire
+- Strong Wind
+- Landslides
+- Drought
+- Earthquake
+- Floods and Landslides
+- Surge
+- Transportation Accident
+- Forest Fire
+- Eruption
+- Epidemic
+- Conflict
+- Earthquake and Tsunami
+- Terrorism
+- Industrial Accident
+- Plague
+- Climate Change
+- Tsunami
+- Hunger
+
+Disasters in Indonesia: Our Focus
+========================================================
+- Fires
+- Floods
+- Forest Fires
+
+Disasters in Indonesia
+========================================================
+- Timeline
+- Major Events
+- Why Indonesia?
+- Factor: Geography
+
+Floods & Fires: A National Timeline
+========================================================
+- 1988 - NASA climate scientist James Hansel declared global warming as a cause of increased heatwaves and drought
+- 1995 - Larson A arctic ice shelf collapse in 1995 (Source: Greenpeace)
+- 2004 - Tsunami (Aceh)
+- 2006 - Sidoarjo mudslide, 40,000 evacuated (East Java)
+- 2010 - Wasior floods, 145 dead, 7900 evacuated (West Papau)
+- 2013 - Greenhouse gases measured above 400 ppm (Manau Loa)
+- 2014 - Karangkobar landslide, approx 100 (Central Java)
+- 2015 - Great Garuda construction begins (Jakarta)
+
+Indonesian Geography I
+========================================================
+- Provinces & Islands
+![Indonesia](jkmap.png)
+
+Indonesian Geography II
+========================================================
+- Provinces & Islands
+- insert chart
+
+Java
+========================================================
+- 58% of Indonesian population
+- Jakarta: Sinking City
+- Great Garuda: Seawall
+
+Sumatra
+========================================================
+- Aceh 2004 Tsunami
+
+Kalimantan (Borneo)
+========================================================
+- Forest Fires
+
+Sulawesi
+========================================================
+- Defining Fact #1
+
+Data Work
+========================================================
+
+```{r, echo=FALSE}
+library("ggplot2")
+library("ggplot2")
+library("tidyr")
+library("dplyr")
+require(scales)
+opts_chunk$set(fig.width=5, fig.height=5)
+indo <- read.csv("newindo.csv")
+code <- read.csv("islands.csv")
+View(code)
+indo <- left_join(indo, code, by=NULL, copy=FALSE)
+View(indo)
+head(indo)
+summary(indo)
+indoisland.agg <- indo %>%
+  group_by(Event, Island, Year) %>%
+  summarise(events=sum(DataCards, na.rm=TRUE), deaths=sum(Deaths, na.rm=TRUE), injured=sum(Injured, na.rm=TRUE), missing=sum(Missing, na.rm=TRUE), housesdestroyed=sum(Houses.Destroyed, na.rm=TRUE), housesdamaged=sum(Houses.Damaged, na.rm=TRUE), victims=sum(Victims, na.rm=TRUE), affected=sum(Affected, na.rm=TRUE), evacuated=sum(Evacuated, na.rm=TRUE), lossUSD=sum(Losses..USD, na.rm=TRUE), lossLOCAL=sum(Losses..Local, na.rm=TRUE), cropdamage=sum(Damages.in.crops.Ha., na.rm=TRUE), agriculture=sum(Agriculture, na.rm=TRUE), power=sum(Power.and.Energy, na.rm=TRUE), relief=sum(Relief, na.rm=TRUE), forest=sum(Plantation.Forest, na.rm=TRUE))
+View(indoisland.agg)
+indo.agg <- indo %>%
+  group_by(Event, Province, Year, Island) %>%
+  summarise(events=sum(DataCards, na.rm=TRUE), deaths=sum(Deaths, na.rm=TRUE), injured=sum(Injured, na.rm=TRUE), missing=sum(Missing, na.rm=TRUE), housesdestroyed=sum(Houses.Destroyed, na.rm=TRUE), housesdamaged=sum(Houses.Damaged, na.rm=TRUE), victims=sum(Victims, na.rm=TRUE), affected=sum(Affected, na.rm=TRUE), evacuated=sum(Evacuated, na.rm=TRUE), lossUSD=sum(Losses..USD, na.rm=TRUE), lossLOCAL=sum(Losses..Local, na.rm=TRUE), cropdamage=sum(Damages.in.crops.Ha., na.rm=TRUE), agriculture=sum(Agriculture, na.rm=TRUE), power=sum(Power.and.Energy, na.rm=TRUE), relief=sum(Relief, na.rm=TRUE), forest=sum(Plantation.Forest, na.rm=TRUE))
+
+indo.agg$death <- as.numeric(indo.agg$deaths>0)
+floods<-subset(indo.agg, Event == "FLOODS", drop=FALSE)
+fires<-subset(indo.agg, Event=="FIRE", drop=FALSE)
+forestfires<-subset(indo.agg, Event=="FOREST FIRE", drop=FALSE)
+
+```
+
+Data by Island
+========================================================
+
+```{r}
+head(indoisland.agg)
+summary(indoisland.agg)
+```
+
+Data by Province
+========================================================
+
+```{r}
+head(indo.agg)
+summary(indo.agg)
+```
+
+Indonesian Fires & Floods
+========================================================
+
+Events over time
+```{r, echo=FALSE}
+plot1 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=events)) + geom_smooth(aes(y=events))+ facet_wrap(~Province, ncol=4)
+  ggtitle("Indonesia Fires & Floods, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+```
+
+Data Analysis
+========================================================
+- What?
+
+Discussion
+========================================================
+- Why?
+
+Policy Recommendation
+========================================================
+- Who? 
+- What?
+- Where?
+- When?
+- Why?
+- How?
+
+THE END
+========================================================
+Thank you
+***
+![JAKARTA_FLOOD](trash.jpg)
