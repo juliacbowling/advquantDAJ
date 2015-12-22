@@ -1,0 +1,244 @@
+---
+title: "Indonesia Fires & Floods"
+author: "Danielle Robinson & Julia Bowling"
+date: "December 20, 2015"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library("ggplot2")
+library("ggplot2")
+library("tidyr")
+library("dplyr")
+require(scales)
+opts_chunk$set(fig.width=5, fig.height=5)
+indo <- read.csv("newindo.csv")
+code <- read.csv("islands.csv")
+View(code)
+indo <- left_join(indo, code, by=NULL, copy=FALSE)
+```
+
+You can also embed plots, for example:
+
+```{r}
+###remove rows that have "0" value for Year
+indo<-indo[!(indo$Year==0)]
+View(indo)
+head(indo)
+summary(indo)
+indoisland.agg <- indo %>%
+  group_by(Event, Island, Year) %>%
+  summarise(events=sum(DataCards, na.rm=TRUE), deaths=sum(Deaths, na.rm=TRUE), injured=sum(Injured, na.rm=TRUE), missing=sum(Missing, na.rm=TRUE), housesdestroyed=sum(Houses.Destroyed, na.rm=TRUE), housesdamaged=sum(Houses.Damaged, na.rm=TRUE), victims=sum(Victims, na.rm=TRUE), affected=sum(Affected, na.rm=TRUE), evacuated=sum(Evacuated, na.rm=TRUE), lossUSD=sum(Losses..USD, na.rm=TRUE), lossLOCAL=sum(Losses..Local, na.rm=TRUE), cropdamage=sum(Damages.in.crops.Ha., na.rm=TRUE), agriculture=sum(Agriculture, na.rm=TRUE), power=sum(Power.and.Energy, na.rm=TRUE), relief=sum(Relief, na.rm=TRUE), forest=sum(Plantation.Forest, na.rm=TRUE))
+View(indoisland.agg)
+head(indoisland.agg)
+summary(indoisland.agg)
+indo.agg <- indo %>%
+  group_by(Event, Province, Year, Island) %>%
+  summarise(events=sum(DataCards, na.rm=TRUE), deaths=sum(Deaths, na.rm=TRUE), injured=sum(Injured, na.rm=TRUE), missing=sum(Missing, na.rm=TRUE), housesdestroyed=sum(Houses.Destroyed, na.rm=TRUE), housesdamaged=sum(Houses.Damaged, na.rm=TRUE), victims=sum(Victims, na.rm=TRUE), affected=sum(Affected, na.rm=TRUE), evacuated=sum(Evacuated, na.rm=TRUE), lossUSD=sum(Losses..USD, na.rm=TRUE), lossLOCAL=sum(Losses..Local, na.rm=TRUE), cropdamage=sum(Damages.in.crops.Ha., na.rm=TRUE), agriculture=sum(Agriculture, na.rm=TRUE), power=sum(Power.and.Energy, na.rm=TRUE), relief=sum(Relief, na.rm=TRUE), forest=sum(Plantation.Forest, na.rm=TRUE))
+
+View(indo.agg)
+head(indo.agg)
+summary(indo.agg)
+indo.agg$death <- as.numeric(indo.agg$deaths>0)
+floods<-subset(indo.agg, Event == "FLOODS", drop=FALSE)
+fires<-subset(indo.agg, Event=="FIRE", drop=FALSE)
+forestfires<-subset(indo.agg, Event=="FOREST FIRE", drop=FALSE)
+
+plot1 <- ggplot(floods, aes(x=Year, colour=factor(Island))) + 
+  geom_point(aes(y=events)) + 
+  ggtitle("Indonesia Floods, 1990-2012") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+plot1 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=events)) + geom_smooth(aes(y=events))+ facet_wrap(~Island, ncol=4)
+  ggtitle("Indonesia Fires, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+ggsave("events.pdf", plot=plot1, dpi=300)
+
+plot2 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=lossLOCAL)) + geom_smooth(aes(y=lossLOCAL))+ 
+  scale_y_continuous(limits = c(0, 10000),breaks=c(0,2000,4000,6000,8000,10000))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Losses from Fires and Floods, Indonesia 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot2)
+ggsave("loss.pdf", plot=plot2, dpi=300)
+plot3 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=housesdamaged)) + geom_smooth(aes(y=housesdamaged))+ 
+  scale_y_continuous(limits = c(0, 8000),breaks=c(0,2000,4000,6000,8000))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Houses Damaged in Fires and Floods, Indonesia 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot3)
+ggsave("houses.pdf", plot=plot3, dpi=300)
+plot4 <- ggplot(indo.agg, aes(x=events, colour=factor(Event))) + 
+  geom_point(aes(y=lossLOCAL)) + geom_smooth(aes(y=lossLOCAL))+
+  scale_y_continuous(limits = c(0, 10000),breaks=c(0,2000,4000,6000,8000,10000))+
+  scale_x_continuous(limits = c(0, 75),breaks=c(0,25,50,75))+
+  facet_wrap(~Event, ncol=2) + ggtitle("Loss by Number of Fires and Floods")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot4)
+ggsave("lossbydisasters.pdf", plot=plot4, dpi=300)
+#forest by province by events
+plot5 <- ggplot(indo.agg, aes(x=events, colour=factor(Event))) + 
+  geom_point(aes(y=forest)) + geom_smooth(aes(y=forest))+
+  scale_x_continuous(limits = c(0, 75),breaks=c(0,25,50,75))+
+  scale_y_continuous(limits = c(0, 20000),breaks=c(5000,10000,15000,20000))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Forest by Province")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot5)
+#forest by province by year
+plot5 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=forest)) + geom_smooth(aes(y=forest))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Forest by Province")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot5)
+##cropdamage by year
+plot5 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=cropdamage)) + geom_smooth(aes(y=cropdamage))+
+  scale_y_continuous(limits = c(0, 10000),breaks=c(0,5000,10000))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Crop Damage by Province")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot5)
+plot5 <- ggplot(indo.agg, aes(x=events, colour=factor(Event))) + 
+  geom_point(aes(y=cropdamage)) + geom_smooth(aes(y=cropdamage))+
+  scale_y_continuous(limits = c(0, 10000),breaks=c(0,5000,10000))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Crop Damage by Province")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot5)
+ggsave("cropdamage.pdf", plot=plot5, dpi=300)
+###excluding some provinces based on 
+####EQUATIONS
+library(DAAG); library(lme4); library(arm)
+e1 <- lmer(formula = lossLOCAL ~ events + housesdamaged + (1 | death), data = floods)
+display(e1)
+e2 <- glm(formula = lossLOCAL ~ events + deaths + housesdestroyed, data=floods)
+display(e2)
+###invlogit
+floods<-subset(indoisland.agg, Event=="FLOODS", drop=FALSE)
+summary(floods)
+View(floods)
+data(floods)
+n <- 62
+x1 <- rnorm (n)
+x2 <- rbinom (n, 1, .5)
+b0 <- 1
+b1 <- 1.5
+b2 <- 2
+e3 <- invlogit(b0+b1*x1+b2*x2)
+plot(b0+b1*x1+b2*x2, e3)
+#TEST
+data(frisk)
+n <- 100
+x1 <- rnorm (n)
+x2 <- rbinom (n, 1, .5)
+b0 <- 1
+b1 <- 1.5
+b2 <- 2
+Inv.logit <- invlogit(b0+b1*x1+b2*x2)
+plot(b0+b1*x1+b2*x2, Inv.logit)
+
+e3 <-PercChange(data, Var, GroupVar, NewVar, slideBy = -1, type = "percent")
+
+e4 <- lmer (lossLOCAL ~ events + deaths + (1 + Year | Province), data=indo.agg)
+arm::display(e4)
+
+###Model: Equation Presentation
+##Equation
+$y_{i}=\beta_0+\beta_{1}x_{i}+\epsilon_{i}$
+
+##Model
+library(xtable)
+eq <- lm(log(indo.agg$events), log(indo.agg$lossLOCAL), offset = NULL, method = "qr", tol = 1e-7, singular.ok = TRUE)
+table <- xtable(eq, digits=2)
+print(table, type="html")
+display(eq)
+
+
+
+plot5 <- ggplot(indo.agg, aes(x=affected, colour=factor(Event))) + 
+  geom_point(aes(y=housesdamaged)) + geom_smooth(aes(y=housesdamaged))+
+  scale_y_continuous(limits = c(0, 1000),breaks=c(0,500,1000))+
+  scale_x_continuous(limits = c(0, 750),breaks=c(0,250,500,750))+
+  facet_wrap(~Event, ncol=2) + ggtitle("Houses Damaged by People Affected")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot5)
+ggsave("housesbyevacuated.pdf", plot=plot4, dpi=300)
+
+
+
+
+
+View(jakartafire)
+head(jakartafire)
+plot1 <- ggplot(jakartafire, aes(x=Serial)) + 
+  geom_point(aes(y=Houses.Destroyed), color="#E63227") + 
+  geom_point(aes(y=Evacuated), color="#0C5B15") + 
+  ggtitle("Jakarta Fire Damage 1990-2012") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+jakartaflood <- read.csv("jakartaflood.csv")
+View(jakartaflood)
+summary(jakartaflood)
+summary(jakartafire)
+head(jakartaflood)
+plot1 <- ggplot(jakartaflood, aes(x=Serial)) + 
+  geom_point(aes(y=Houses.Destroyed), color="#E63227") + 
+  geom_point(aes(y=Evacuated), color="#0C5B15") + 
+  ggtitle("Jakarta Flood Damage 1990-2012") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+indogeneral <- read.csv("indogeneral.csv")
+View(indogeneral)
+summary(indogeneral)
+plot1 <- ggplot(indogeneral, aes(x=Year)) + 
+  geom_line(aes(y=GDP), color="#E63227") + 
+  ggtitle("Indonesia GDP 1990-2014") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+###Add percent change of GNI per capita and forest area
+indogeneral$changeGNIpc <- mutate(indogeneral$GNIpercapita/lag(indogeneral$GNIpercapita, -1))
+plot1 <- ggplot(indogeneral, aes(x=Year)) + 
+  geom_line(aes(y=GNIpercapita), color="#E63227") + 
+  geom_line(aes(y=area_forest), color="#0C5B15") + 
+  ggtitle("GNI and Forest Area in Indonesia, 1990-2014") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+
+indogeneral$co2 <- indogeneral$co2em_metrictonpercap*indogeneral$population
+plot1 <- ggplot(indogeneral, aes(x=co2)) + 
+  geom_line(aes(y=area_forest), color="#E63227") + 
+  ggtitle("Indonesia: CO2 Emissions & Forest Area 1990-2011") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+jakartafire <- read.csv("jakartafire.csv")
+View(indoj)
+head(indoj)
+###??? 
+jakarta <- subset(indoj, Province_E==Jakarta, drop=FALSE)
+plot1 <- ggplot(indoj, aes(x=Date)) + 
+  geom_point(aes(y=Houses.Destroyed), color="#E63227") + 
+  ggtitle("Houses Destroyed in Floods & Fires 1990-2010") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+plot1 <- ggplot(indoj, aes(x=Date)) + 
+  geom_point(aes(y=Houses.Destroyed), color="#E63227") + 
+  ggtitle("Jakarta Floods & Fires 1990-2010") + 
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+```
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+###Final Project 
+###Julia Bowling
+###Indo Data
+
+

@@ -1,0 +1,452 @@
+Indonesia Fires & Floods
+========================================================
+author: Danielle Robinson & Julia Bowling
+date: December 21, 2015
+
+Agenda
+========================================================
+- Background
+- Disasters
+- Timeline
+- Geography and Environment
+- Sources & Variables
+- Analysis
+- Discussion
+- Policy Recommendation
+
+Disasters in Indonesia
+========================================================
+- Floods, Earthquake, Landslides, Volcano, Epidemic, Forest Fires, Storms, Drought, Tsunami, Strong Wind, Floods and Landslides, Surge, Transportation Accident, Forest Fire, Eruption, Conflict, Earthquake and Tsunami, Terrorism, Industrial Accident, Plague, Climate Change, Hunger
+
+Natural Disasters: Loss & Distribution
+========================================================
+![pie_chart](piechart.png)
+***
+![pie_chart_2](piechart2.png)
+
+Disasters in Indonesia: Our Focus
+========================================================
+- Fires
+- Floods
+- Forest Fires
+
+Disasters in Indonesia
+========================================================
+- Timeline
+- Major Events
+- Why Indonesia?
+- Factor: Geography
+
+Floods & Fires: A National Timeline
+========================================================
+- 1988 - NASA climate scientist James Hansel declared global warming as a cause of increased heatwaves and drought
+- 1995 - Larson A arctic ice shelf collapse in 1995 (Source: Greenpeace)
+- 2004 - Tsunami (Aceh)
+- 2006 - Sidoarjo mudslide, 40,000 evacuated (East Java)
+- 2010 - Wasior floods, 145 dead, 7,900 evacuated (West Papau)
+- 2013 - Greenhouse gases measured above 400 ppm (Manau Loa)
+- 2014 - Karangkobar landslide, approx 100 deaths (Central Java)
+- 2014 - Flood, 80,000 displaced (North Sulawesi)
+- 2015 - Great Garuda construction begins (Jakarta)
+
+Background of Indonesia
+========================================================
+![languages](languages.png)
+***
+- Population over 255 million
+- Over 17,000 islands
+- 700 regional languages
+- Industry and Agriculture
+- Cost of air pollution from CO2 emissions: $400 million
+
+Indonesian Geography
+========================================================
+- Provinces & Islands
+![Indonesia](jkmap.png)
+
+Java
+========================================================
+![greatgaruda](greatgaruda.png)
+***
+- 58% of Indonesian population
+- Jakarta: Sinking City
+- Great Garuda: Seawall
+
+Sumatra
+========================================================
+- Aceh 2004 Tsunami
+![elephant](elephant.png)
+
+Kalimantan (Borneo)
+========================================================
+![forestfires](firealert.png)
+***
+- Forest Fires
+- Peatlands
+- Government Incentive
+- Community Adaptation Plans
+
+
+Sulawesi
+========================================================
+![sulawesi](sulawesi2014flood.jpg)
+***
+- 2014 flood in north Sulawesi
+- 80,000 evacuees 
+- $580 million in damages
+
+Environmental Factors
+========================================================
+![peatland](peatwest.png)
+***
+- Peatlands
+- Primary Forest
+- Aforestation and destruction of habitat
+- Endemic Species, 36%
+
+Environmental Challenges
+========================================================
+- Flooding
+- Depleted Aquifers
+- Sea Level Rise
+- Forest Fires
+- Intentional Burning
+
+Flooding
+========================================================
+![rescue](rescue.png)
+***
+- Highest incidence of natural disasters each year
+- Lack solid waste management system
+- Low capacity for water purification
+- High levels of E. Coli
+
+Depleted Aquifers
+========================================================
+- Illegal groundwater extraction
+- Shallow wells
+- Subsidence
+- 40% of Jakarta below sea level
+
+Sea Level Rise (SLR)
+========================================================
+- Rise in global temperatures
+- Global Annual Average SLR: 0.33 inches
+- Jakarta: 3 inches
+
+Forest Fires
+========================================================
+- Palm Oil and Pulp-Paper concessions
+- Strong Winds; Drought; Drained Peatlands; CO2 Emissions
+![forest_conservation](conservedforestsfires.png)
+
+Multi-Lateral Frameworks
+========================================================
+- Hyogo Framework for Action 2005 - 2015
+- Sendai Framework for Disaster Risk Reduction 2015 - 2030 
+- Bali Action Plan 2007
+
+Data
+========================================================
+- World Bank
+- DesInventar (UN International Strategy for Disaster Risk Reduction)
+- 4 Islands: Sulawesi, Sumatra, Java, Kalimantan
+- 26 Provinces
+- 4488 events
+- Dates 1990 - 2012
+
+Questions
+========================================================
+- What type of natural disaster, fires or floods, contributes more to loss of livelihood and economic loss?
+- Does conservation of forests help to decrease economic loss?
+- Does the increased occurance of natural disasters increase economic loss?
+
+Hypotheses
+========================================================
+- H0: There is no difference in economic loss from natural disasters including fires, forest fires, and floods.
+- HA: There is an increase in economic loss from natural disasters including fires, forest fires, and floods.
+
+Assumptions
+========================================================
+- 1. Increase in injured people after floods
+- 2. Higher fire risk between May and September
+- 3. Increase in local government intervention, decrease in fire loss
+- 4. Inverse relationship between mobile technology use and number of people injured or deaths
+- 5. Dredged areas experience less loss
+- 6. Floods increase with high levels of groundwater extraction
+- 7. Forest Fire risk increases in older concessions
+
+Data Work
+========================================================
+
+```{r}
+library("ggplot2")
+library("ggplot2")
+library("tidyr")
+library("dplyr")
+require(scales)
+opts_chunk$set(fig.width=5, fig.height=5)
+indo <- read.csv("newindo.csv")
+code <- read.csv("islands.csv")
+indo <- left_join(indo, code, by=NULL, copy=FALSE)
+```
+
+Data Work, continued.
+========================================================
+
+```{r}
+indo.agg <- indo %>%
+  group_by(Event, Province, Year, Island) %>%
+  summarise(events=sum(DataCards, na.rm=TRUE), deaths=sum(Deaths, na.rm=TRUE), injured=sum(Injured, na.rm=TRUE), missing=sum(Missing, na.rm=TRUE), housesdestroyed=sum(Houses.Destroyed, na.rm=TRUE), housesdamaged=sum(Houses.Damaged, na.rm=TRUE), victims=sum(Victims, na.rm=TRUE), affected=sum(Affected, na.rm=TRUE), evacuated=sum(Evacuated, na.rm=TRUE), lossUSD=sum(Losses..USD, na.rm=TRUE), lossLOCAL=sum(Losses..Local, na.rm=TRUE), cropdamage=sum(Damages.in.crops.Ha., na.rm=TRUE), agriculture=sum(Agriculture, na.rm=TRUE), power=sum(Power.and.Energy, na.rm=TRUE), relief=sum(Relief, na.rm=TRUE), forest=sum(Plantation.Forest, na.rm=TRUE))
+```
+
+Final Dataset
+========================================================
+```{r}
+summary(indo.agg)
+```
+
+Subsets by Disaster Type
+========================================================
+```{r}
+indo.agg$death <- as.numeric(indo.agg$deaths>0)
+floods<-subset(indo.agg, Event == "FLOODS", drop=FALSE)
+fires<-subset(indo.agg, Event=="FIRE", drop=FALSE)
+forestfires<-subset(indo.agg, Event=="FOREST FIRE", drop=FALSE)
+```
+Aggregating by Island
+========================================================
+```{r}
+indoisland.agg <- indo %>%
+  group_by(Event, Island, Year) %>%
+  summarise(events=sum(DataCards, na.rm=TRUE), deaths=sum(Deaths, na.rm=TRUE), injured=sum(Injured, na.rm=TRUE), missing=sum(Missing, na.rm=TRUE), housesdestroyed=sum(Houses.Destroyed, na.rm=TRUE), housesdamaged=sum(Houses.Damaged, na.rm=TRUE), victims=sum(Victims, na.rm=TRUE), affected=sum(Affected, na.rm=TRUE), evacuated=sum(Evacuated, na.rm=TRUE), lossUSD=sum(Losses..USD, na.rm=TRUE), lossLOCAL=sum(Losses..Local, na.rm=TRUE), cropdamage=sum(Damages.in.crops.Ha., na.rm=TRUE), agriculture=sum(Agriculture, na.rm=TRUE), power=sum(Power.and.Energy, na.rm=TRUE), relief=sum(Relief, na.rm=TRUE), forest=sum(Plantation.Forest, na.rm=TRUE))
+```
+
+Data by Island
+========================================================
+
+```{r}
+head(indoisland.agg)
+summary(indoisland.agg)
+```
+
+Data by Province
+========================================================
+
+```{r}
+head(indo.agg)
+summary(indo.agg)
+```
+
+Indonesian Fires & Floods
+========================================================
+```{r, echo=FALSE}
+plot1 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=events)) + geom_smooth(aes(y=events))+ facet_wrap(~Province, ncol=4)+
+  ggtitle("Indonesia Fires & Floods, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+```
+***
+- Increase in events over time
+
+Indonesian Fires & Floods by Island
+========================================================
+```{r, echo=FALSE}
+plot1 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=events)) + geom_smooth(aes(y=events))+ facet_wrap(~Island, ncol=2)+
+  ggtitle("Indonesia Fires & Floods, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+```
+***
+- Increase in events over time
+
+Floods by Island
+========================================================
+- 162 floods on average per province
+- Highest increase on Java
+
+```{r, echo=FALSE}
+plot1 <- ggplot(floods, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=events)) + geom_smooth(aes(y=events))+ facet_wrap(~Island, ncol=2)+
+  ggtitle("Indonesia Floods, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+```
+
+Fires by Island
+========================================================
+- Increase in events over time
+- Increase in fires in Kalimantan
+
+```{r, echo=FALSE}
+plot1 <- ggplot(fires, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=events)) + geom_smooth(aes(y=events))+ facet_wrap(~Island, ncol=2)+
+  ggtitle("Indonesia Fires by Province, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+```
+
+Forest Fires by Island
+========================================================
+- Increase in events over time
+- Increase in fires in Kalimantan
+
+```{r, echo=FALSE}
+plot1 <- ggplot(forestfires, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=events)) + geom_smooth(aes(y=events))+ facet_wrap(~Island, ncol=4)+
+  ggtitle("Indonesia Forest Fires by Island, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot1)
+```
+
+Houses Damaged in Fires and Floods
+========================================================
+- Increase in events over time
+
+```{r, echo=FALSE}
+plot3 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=housesdamaged)) + geom_smooth(aes(y=housesdamaged))+ 
+  scale_y_continuous(limits = c(0, 8000),breaks=c(0,2000,4000,6000,8000))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Houses Damaged in Fires & Floods, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot3)
+```
+
+Distribution of Local Loss by Number of Events
+========================================================
+```{r, echo=FALSE}
+plot3 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=lossLOCAL)) + geom_smooth(aes(y=lossLOCAL))+ 
+  scale_y_continuous(limits = c(0, 8000),breaks=c(0,2000,4000,6000,8000))+
+  facet_wrap(~Province, ncol=4) + ggtitle("Fire & Flood Loss, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot3)
+```
+***
+- Certain provinces incur more loss from events overall
+- Cumulative number of low loss events
+- Impact of few events with high economic loss
+
+Crop Damages by Province over Time
+========================================================
+```{r, echo=FALSE}
+plot3 <- ggplot(indo.agg, aes(x=Year, colour=factor(Event))) + 
+  geom_point(aes(y=cropdamage)) + geom_smooth(aes(y=cropdamage))+ 
+  facet_wrap(~Province, ncol=4) + ggtitle("Crop Damage, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot3)
+```
+***
+- Certain provinces with more damage; Increase in floods since 2000
+
+Crop Damages by Province, Events
+========================================================
+```{r, echo=FALSE}
+plot3 <- ggplot(indo.agg, aes(x=events, colour=factor(Event))) + 
+  geom_point(aes(y=cropdamage)) + geom_smooth(aes(y=cropdamage))+ 
+  facet_wrap(~Province, ncol=4) + ggtitle("Crop Damage, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot3)
+```
+***
+- Forest fires incure high costs from damage
+- Gorontalo, Sulawesi - increase in floods and fires and number of hectares damaged
+- Aceh and Riau, Sumatra - damage from fires in north, damage from floods in south
+
+Crop Damages by Island, Events
+========================================================
+```{r, echo=FALSE}
+plot3 <- ggplot(indo.agg, aes(x=events, colour=factor(Event))) + 
+  geom_point(aes(y=cropdamage)) + geom_smooth(aes(y=cropdamage))+ 
+  facet_wrap(~Island, ncol=2) + ggtitle("Crop Damage, 1990-2012")  +
+  theme(plot.title = element_text(family="Helvetica", face ="bold", size=18, hjust=0))
+print(plot3)
+```
+
+Data Analysis
+========================================================
+- Models
+```{r, echo=FALSE}
+library(DAAG); library(lme4); library(arm)
+e1 <- lmer(formula = lossLOCAL ~ events + housesdamaged + (1 | death), data = floods)
+display(e1)
+```
+***
+$y_{i}=\beta_0+\beta_{1}x_{i}+\beta_{2}x_{i}+\beta_{3}x_{i}+\epsilon_{i}$
+- $y_{i}$ = local economic loss in Rupiah
+- $\beta_{1}$ = events
+- $\beta_{2}$ = houses damaged
+- $\beta_{3}$ = any death (binary)
+
+Data Analysis
+========================================================
+- Models
+```{r, echo=FALSE}
+e2 <- glm(formula = lossLOCAL ~ events + housesdestroyed + deaths, data=floods)
+display(e2)
+```
+***
+$y_{i}=\beta_0+\beta_{1}x_{i}+\beta_{2}x_{i}+\beta_{3}x_{i}+\epsilon_{i}$
+- $y_{i}$ = local economic loss in Rupiah
+- $\beta_{1}$ = events
+- $\beta_{2}$ = houses destroyed
+- $\beta_{3}$ = deaths
+
+Discussion
+========================================================
+- Focus on prevention and anticipatory plans
+- Urban evacuation routes
+- Reduce intentional fires
+
+Adaptation Efforts
+========================================================
+- Sea Wall
+- Early Warning System
+- Dredging
+- GM crops
+
+Great Garuda Sea Wall
+========================================================
+![greatgaruda](greatgaruda.png)
+***
+- Prevents storm surges from reaching land
+- Erodes islands, reefs
+- Marine ecosystem damage
+- Doesn't address groundwater extraction problem
+
+Early Warning System
+========================================================
+![NINO4fires](nino4.png)
+***
+- Multi-hazard system
+- Model for recovery strategies, not prevention strategies
+- Columbia Institute, 2008
+- NINO4 Index
+
+Dredging
+========================================================
+- Port of Jakarta
+- Training Dikes lower local sea level depth
+- Sohei Matsuno, Professor
+- Increase of 1.5 meters in 2020 above 2013 level
+
+Genetic Modification
+========================================================
+- Increase of GMO crops: palm oil and bananas
+- High toleration of saline and high water levels
+
+Policy Recommendation
+========================================================
+- Implentation of adaptation efforts
+- Implementation of multi-hazard early warning systems
+- Mitigate effects of Great Garuda with water purification & wastewater treatment
+- Create local community adaptation task forces in provinces
+
+THE END
+========================================================
+![JAKARTA_FLOOD](trash.jpg)
+***
+Thank you
+
